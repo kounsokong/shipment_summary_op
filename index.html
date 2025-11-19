@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shipment Summary - Angkobodia Logistics Co., Ltd</title>
+<style>
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  body {
+    font-family: "Arial", "Khmer OS Battambang", sans-serif;
+    font-size: 13px;
+    color: #000;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #000;
+    padding-bottom: 8px;
+  }
+
+  .header img {
+    height: 60px;
+  }
+
+  .header-text {
+    text-align: right;
+  }
+
+  .header-text h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #002060;
+  }
+
+  .header-text p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  h3.title {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 18px;
+    text-transform: uppercase;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5px;
+  }
+
+  th, td {
+    border: 1px solid #000;
+    padding: 6px 8px;
+    vertical-align: middle;
+  }
+
+  th {
+    background: #f9f9f9;
+    text-align: left;
+  }
+
+  .no-border td {
+    border: none;
+  }
+
+  .section-title {
+    font-weight: bold;
+    background: #f2f2f2;
+    text-transform: uppercase;
+  }
+
+  .notes {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+
+  .align-center {
+    text-align: center;
+  }
+
+  .right {
+    text-align: right;
+  }
+
+  .bold {
+    font-weight: bold;
+  }
+
+  .no-top-border td {
+    border-top: none;
+  }
+
+  @media print {
+    body {
+      margin: 0;
+    }
+    .container {
+      max-width: 100%;
+    }
+  }
+
+  .loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+  }
+  
+ .print-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    background-color: #002060;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+
+  .print-button:hover {
+    background-color: #003080;
+  }
+
+  .print-button:active {
+    background-color: #001040;
+  }
+
+  @media print {
+    .print-button {
+      display: none;
+    }
+  }
+  
+</style>
+</head>
+<body>
+    
+    <!-- Print Button -->
+  <button class="print-button" onclick="window.print()">🖨️ Print</button>
+    
+  <div class="container" id="documentContainer">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <img src="logo.png" alt="Angkobodia Logistics Logo" onerror="this.style.display='none'">
+      </div>
+      <div class="header-text">
+        <h2>Angkobodia Logistics Co., Ltd</h2>
+      </div>
+    </div>
+
+    <h3 class="title">Shipment Summary</h3>
+
+    <!-- Shipment Info -->
+    <table>
+      <tr>
+        <td>DATE: <b id="date"></b></td>
+        <td>BL.: <b id="bill_of_lading"></b></td>
+      </tr>
+      <tr>
+        <td>JOB NO: <b id="lot_no"></b></td>
+        <td>CNTR No: <b id="container_nos"></b></td>
+      </tr>
+      <tr>
+        <td>SHIPMENT MODE: <b id="job_type"></b></td>
+        <td>ETD: <b id="etd"></b></td>
+      </tr>
+      <tr>
+        <td>VOLUME: <b><span id="total_pkg"></span><span id="unit"></span></b></td>
+        <td>INV#: <b id="invoice_no"></b></td>
+      </tr>
+      <tr>
+        <td>GROSS WEIGHT: <b id="total_gw"></b></td>
+        <td>CUSTOMER: <b><span id="customer"></span>: <span id="customer_name"></span></b></td>
+      </tr>
+      <tr>
+        <td>CBM: <b id="cbm"></b></td>
+        <td>OPERATOR: <b id="operator"></b></td>
+      </tr>
+    </table>
+
+    <!-- Special Case -->
+    <table>
+      <tr>
+        <th style="width: 50%;" class="align-center">SPECIAL CASE</th>
+        <th style="width: 50%;" class="align-center">REMARKS SELL FACTORY</th>
+      </tr>
+      <tr>
+        <td id="special_case"></td>
+        <td id="remark_sell_factory"></td>
+      </tr>
+    </table>
+
+    <p class="notes"><b>Notes:</b> <span id="remarks"></span></p>
+
+    <!-- Container -->
+    <table>
+      <tr>
+        <th colspan="6" class="align-center section-title">CONTAINER</th>
+      </tr>
+      <tr>
+        <th style="width: 3%; text-align: center;">No</th>
+        <th style="width: 15%; text-align: center;">CONTAINER#</th>
+        <th style="width: 17%; text-align: center;">CARRIER NAME</th>
+        <th style="width: 30%; text-align: center;">BUYING</th>
+        <th style="width: 30%; text-align: center;">SELLING</th>
+        <th style="width: 5%; text-align: center;">DEPOSIT</th>
+
+      </tr>
+      <tbody id="containerTableBody">
+        <!-- Container rows will be inserted here -->
+      </tbody>
+    </table>
+
+  <script>
+    // Function to get URL parameters
+    function getUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const data = {};
+      for (const [key, value] of params) {
+        data[key] = decodeURIComponent(value);
+      }
+      return data;
+    }
+
+    // Function to safely set element content
+    function setElementContent(id, value) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.textContent = value || '';
+      }
+    }
+
+    // Function to parse JSON arrays from URL parameters
+    function parseJsonParam(param) {
+      try {
+        return JSON.parse(param);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    // Function to populate the document
+    function populateDocument() {
+      const params = getUrlParams();
+
+      // Populate single value fields
+      setElementContent('date', params.date);
+      setElementContent('bill_of_lading', params.bill_of_lading);
+      setElementContent('lot_no', params.lot_no);
+      setElementContent('container_nos', params.container_nos);
+      setElementContent('job_type', params.job_type);
+      setElementContent('etd', params.etd);
+      setElementContent('total_pkg', params.total_pkg);
+      setElementContent('unit', params.unit);
+      setElementContent('invoice_no', params.invoice_no);
+      setElementContent('total_gw', params.total_gw);
+      setElementContent('customer', params.customer);
+      setElementContent('customer_name', params.customer_name);
+      setElementContent('cbm', params.cbm);
+      setElementContent('operator', params.operator);
+      setElementContent('special_case', params.special_case);
+      setElementContent('remark_sell_factory', params.remark_sell_factory);
+      setElementContent('remarks', params.remarks);
+      setElementContent('revenue', params.revenue);
+      setElementContent('operating_expense', params.operating_expense);
+      setElementContent('gross_profit', params.gross_profit);
+
+      // Populate container table
+      const containerTableBody = document.getElementById('containerTableBody');
+      const containers = parseJsonParam(params.containers || '[]');
+      
+      if (containers.length > 0) {
+        containers.forEach((container, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td style="text-align: center;">${index + 1}</td>
+            <td style="text-align: left;">${container.container_no || ''}<br>${container.size || ''}</td>
+            <td style="text-align: left;">${container.carrier_name || ''}<br>${container.seal_no || ''}</td>
+            <td style="text-align: left;">${container.buying || ''}</td>
+            <td style="text-align: left;">${container.selling || ''}</td>
+            <td style="text-align: right;">${container.deposit || ''}</td>
+          `;
+          containerTableBody.appendChild(row);
+        });
+      } else {
+        // Default empty row if no data
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td></td>
+          <td><br></td>
+          <td><br></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        `;
+        containerTableBody.appendChild(row);
+      }
+
+    // Auto-print functionality (optional - uncomment if needed)
+    function autoPrint() {
+      const params = getUrlParams();
+      if (params.autoprint === 'true') {
+        setTimeout(() => {
+          window.print();
+        }, 500);
+      }
+    }
+
+    // Initialize document when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      populateDocument();
+      // autoPrint(); // Uncomment to enable auto-print
+    });
+  </script>
+</body>
+</html>
