@@ -161,7 +161,7 @@
     <!-- Print Button -->
   <button class="print-button" onclick="window.print()">🖨️ Print</button>
     
-   <div class="container" id="documentContainer">
+  <div class="container" id="documentContainer">
     <!-- Header -->
     <div class="header">
       <div class="logo">
@@ -235,8 +235,6 @@
       </tbody>
     </table>
 
-  </div>
-
   <script>
     // Function to get URL parameters
     function getUrlParams() {
@@ -287,6 +285,9 @@
       setElementContent('special_case', params.special_case);
       setElementContent('remark_sell_factory', params.remark_sell_factory);
       setElementContent('remarks', params.remarks);
+      setElementContent('revenue', params.revenue);
+      setElementContent('operating_expense', params.operating_expense);
+      setElementContent('gross_profit', params.gross_profit);
 
       // Populate container table
       const containerTableBody = document.getElementById('containerTableBody');
@@ -324,10 +325,9 @@
       const expenses1 = parseJsonParam(params.expenses1 || '[]');
       const expenses2 = parseJsonParam(params.expenses2 || '[]');
       
-      // Function to add expense rows (with support for sub-items)
-      function addExpenseRows(expenseList) {
-        expenseList.forEach((expense) => {
-          // Add main expense row
+      // Add first list of expenses
+      if (expenses1.length > 0) {
+        expenses1.forEach((expense) => {
           const row = document.createElement('tr');
           row.innerHTML = `
             <td style="text-align: center;">${expense.date || ''}</td>
@@ -338,33 +338,23 @@
             <td style="text-align: right;">${expense.profit || ''}</td>
           `;
           expenseTableBody.appendChild(row);
-          
-          // Add sub-items if they exist
-          if (expense.sub_items && Array.isArray(expense.sub_items) && expense.sub_items.length > 0) {
-            expense.sub_items.forEach((subItem) => {
-              const subRow = document.createElement('tr');
-              subRow.innerHTML = `
-                <td style="text-align: center;"></td>
-                <td style="text-align: left; padding-left: 20px;">└ ${subItem.vendor || ''}</td>
-                <td style="text-align: left; padding-left: 20px;">└ ${subItem.description || ''}</td>
-                <td style="text-align: right;">${subItem.selling_amount || ''}</td>
-                <td style="text-align: right;">${subItem.buying_amount || ''}</td>
-                <td style="text-align: right;">${subItem.profit || ''}</td>
-              `;
-              expenseTableBody.appendChild(subRow);
-            });
-          }
         });
-      }
-      
-      // Add first list of expenses
-      if (expenses1.length > 0) {
-        addExpenseRows(expenses1);
       }
       
       // Add second list of expenses
       if (expenses2.length > 0) {
-        addExpenseRows(expenses2);
+        expenses2.forEach((expense) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td style="text-align: center;">${expense.date || ''}</td>
+            <td style="text-align: left;">${expense.vendor || ''}</td>
+            <td style="text-align: left;">${expense.description || ''}</td>
+            <td style="text-align: right;">${expense.selling_amount || ''}</td>
+            <td style="text-align: right;">${expense.buying_amount || ''}</td>
+            <td style="text-align: right;">${expense.profit || ''}</td>
+          `;
+          expenseTableBody.appendChild(row);
+        });
       }
       
       // Add default empty rows if both lists are empty
